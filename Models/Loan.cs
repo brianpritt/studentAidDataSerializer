@@ -5,8 +5,8 @@ namespace StudentAidData
 {
     public class Status 
     {
-        public string LoanStatus {get;set;}
-        public string LoanStatusDescription {get;set;}
+        public string? LoanStatus {get;set;}
+        public string? LoanStatusDescription {get;set;}
         public DateTime? LoanStatusEffectiveDate {get;set;}
 
     }

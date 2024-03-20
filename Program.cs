@@ -38,7 +38,14 @@ namespace StudentAidData{
             List<Loan> loanList = Loan.CovertLoans(loans);
             student.StudentLoans = loanList;
             string jsonString = JsonSerializer.Serialize(student, new JsonSerializerOptions { WriteIndented = true });
-            System.IO.File.WriteAllText(@"studentAidData.json", jsonString);  
+            try {
+                System.IO.File.WriteAllText(@"studentAidData.json", jsonString);
+                Console.WriteLine("Task complete.");
+            }
+            catch {
+                Console.WriteLine("Problem writing file.");
+            }
+              
        }
     }
 }
