@@ -11,7 +11,7 @@ namespace StudentAidData
 
     }
 
-    public class Loan 
+    public class Loan : BaseModel 
     {
         public string? LoanTypeCode {get;set;}
         public string? LoanTypeDescription {get;set;}
@@ -132,7 +132,7 @@ namespace StudentAidData
                         statusChanges.Add(new string(line));
                     }
 
-                    SetLoanProperty(currentLoan, loanType, key, value);
+                    SetProperty(currentLoan, loanType, key, value);
                 }
 
                 Status loanStatus = new();
@@ -171,44 +171,6 @@ namespace StudentAidData
                 loanList.Add(currentLoan);
             }
             return loanList;
-        }
-        private static void SetLoanProperty(Loan currentLoan, Type loanType,string key, string value)
-        {
-            string format = "MM/dd/yyyy";
-            CultureInfo provider = CultureInfo.InvariantCulture;
-            PropertyInfo? propertyInfo = loanType.GetProperty(String.Concat(key.Where(c => !Char.IsWhiteSpace(c))), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-            if (propertyInfo != null && propertyInfo.CanWrite)
-                    {
-                        if (propertyInfo.PropertyType == typeof(DateTime) || propertyInfo.PropertyType == typeof(DateTime?))
-                        {
-                            if(value != ""){
-                                propertyInfo.SetValue(currentLoan, DateTime.ParseExact(value, format, provider));
-                            } 
-                            else
-                            {
-                                propertyInfo.SetValue(currentLoan, null);
-                            }
-                        }
-                        else if(propertyInfo.PropertyType == typeof(decimal) || propertyInfo.PropertyType == typeof(decimal?))
-                            
-                            {
-                                bool containsPercent = value.Contains('%');
-                                bool containsDollar = value.Contains('$');
-                                if (containsDollar || containsPercent)
-                                {
-                                    propertyInfo.SetValue(currentLoan, Decimal.Parse(value.Trim(containsDollar ? '$' :'%')));
-                                }
-                            }
-                        else if(propertyInfo.PropertyType == typeof(int))
-                        {
-                            propertyInfo.SetValue(currentLoan, int.Parse(value));
-                        }
-                        else 
-                        {
-                            propertyInfo.SetValue(currentLoan, value);
-                        }
-                    }
         }
     }
 }
