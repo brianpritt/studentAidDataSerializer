@@ -2,7 +2,7 @@
 
 ## Description
 
-A quick and dirty concole app that parses raw text loan data from studentaid.gov into a .json file
+A quick and dirty console app that parses raw text loan data from studentaid.gov into a .json file
 
 
 
@@ -21,12 +21,15 @@ Output will be written in project home directory
 ## Authors
 
 Brian Pritt
+brianpritt@gmail.com
 
 ## License
 
 GPLv3
 
 'AS IS'
+
+If this helped you understand your loans, PLEASE drop me a line.
 
 ## FAQ
 
@@ -35,6 +38,9 @@ Is if finished?
 
 Does it work?
 * Yes?
+
+TODO:
+* Give totals in console after parsing: Payment count, total owed, etc
 
 
 
