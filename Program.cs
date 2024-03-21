@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Text.Json;
 
 namespace StudentAidData{
@@ -32,7 +31,7 @@ namespace StudentAidData{
        } 
        private static string ParseStudentAidData(string[] lines)
        {
-            StudentInfo student = StudentInfo.StudentFactory( lines);
+            StudentInfo student = StudentInfo.StudentFactory(lines);
             
             student.StudentLoans = Loan.CovertLoans(Loan.CreateList(lines));
             string jsonString = JsonSerializer.Serialize(student, new JsonSerializerOptions { WriteIndented = true });

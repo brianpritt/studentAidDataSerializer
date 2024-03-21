@@ -1,5 +1,3 @@
-using System;
-using System.Reflection;
 using System.Globalization;
 namespace StudentAidData
 {
@@ -85,11 +83,12 @@ namespace StudentAidData
         
         public static List<List<string>> CreateList(string[] lines)
         {
-            List<List<string>> loans = new List<List<string>>();
-            List<string> currentLoan = new List<string>();
+            List<List<string>> loans = new();
+            List<string> currentLoan = new();
             bool loanStart = false;
 
-            foreach (string line in lines){
+            foreach (string line in lines)
+            {
                 if (line.StartsWith("Loan Type Code"))
                 {
                     loanStart = true;
@@ -109,16 +108,19 @@ namespace StudentAidData
             }
             return loans;
         }
+
         public static List<Loan> CovertLoans(List<List<string>> loans)
         {
             string format = "MM/dd/yyyy";
             CultureInfo provider = CultureInfo.InvariantCulture;
-            List<Loan> loanList = new List<Loan>();
+            List<Loan> loanList = new();
+
             foreach(var loan in loans)
             {
                 Loan currentLoan = new();
                 List<string> statusChanges = new();
                 Type loanType = typeof(Loan);
+
                 foreach(string line in loan)
                 {
                     Dictionary<string,string> loanDict = new();
@@ -133,11 +135,11 @@ namespace StudentAidData
 
                     SetProperty(currentLoan, loanType, key, value);
                 }
-                currentLoan.StatusChanges = ParseStatusChanges(statusChanges, format, provider);
-                loanList.Add(currentLoan);
-              
+
+                currentLoan.StatusChanges = ParseStatusChanges(statusChanges, format, provider);              
                 loanList.Add(currentLoan);
             }
+            
             return loanList;
         }
         public static List<Status> ParseStatusChanges(List<string> statusChanges, string format, CultureInfo provider)
