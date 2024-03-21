@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Text.Json;
 
 namespace StudentAidData{
@@ -17,35 +16,27 @@ namespace StudentAidData{
                 Console.WriteLine($"The file '{filePath}' does not exist.");
                 return;
             }
-            string[] lines = File.ReadAllLines(filePath);
-            
-            StudentInfo student = new();
-            Type studentType = typeof(StudentInfo);
-            foreach (var line in lines)
-            {
-                var parts = line.Split(new[] { ':' }, 2);
-                string key = parts[0];
-                string value = parts[1] != null ? parts[1] : "";
 
-                PropertyInfo? propertyInfo = studentType.GetProperty(String.Concat(key.Where(c => !Char.IsWhiteSpace(c))), BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-                if (propertyInfo != null && propertyInfo.CanWrite)
-                {
-                    propertyInfo.SetValue(student, value);
-                }
-            }
-            //Combine these two methods
-            List<List<string>> loans = Loan.CreateList(lines);
-            List<Loan> loanList = Loan.CovertLoans(loans);
-            student.StudentLoans = loanList;
-            string jsonString = JsonSerializer.Serialize(student, new JsonSerializerOptions { WriteIndented = true });
+            string[] lines = File.ReadAllLines(filePath);
+            string aidData = Program.ParseStudentAidData(lines);
+
             try {
-                System.IO.File.WriteAllText(@"studentAidData.json", jsonString);
+                System.IO.File.WriteAllText(@"studentAidData.json", aidData);
                 Console.WriteLine("Task complete.");
             }
             catch {
                 Console.WriteLine("Problem writing file.");
             }
               
+       } 
+       private static string ParseStudentAidData(string[] lines)
+       {
+            StudentInfo student = StudentInfo.StudentFactory(lines);
+            
+            student.StudentLoans = Loan.CovertLoans(Loan.CreateList(lines));
+            string jsonString = JsonSerializer.Serialize(student, new JsonSerializerOptions { WriteIndented = true });
+            
+            return jsonString;
        }
     }
 }

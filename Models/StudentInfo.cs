@@ -1,5 +1,7 @@
+using System.Reflection;
+using System.Globalization;
 namespace StudentAidData{
-    public class StudentInfo{
+    public class StudentInfo : BaseModel{
         public StudentInfo()
         {}
         public string? StudentFirstName { get; set; }
@@ -49,5 +51,20 @@ namespace StudentAidData{
         public string? StudentIraqandAfghanistanServiceLifetimeEligibilityUsed { get; set;}
         public string? StudentTotalAllGrants { get; set;}
         public List<Loan>? StudentLoans {get;set;}
+    
+        public static StudentInfo StudentFactory( string[] lines)
+        {
+            StudentInfo student = new();
+            Type studentType = typeof(StudentInfo);
+            foreach (var line in lines)
+            {
+                var parts = line.Split(new[] { ':' }, 2);
+                string key = parts[0];
+                string value = parts[1] != null ? parts[1] : "";
+                SetProperty(student,studentType, key, value);
+            }
+            return student;
+        }
     }
+    
 }
