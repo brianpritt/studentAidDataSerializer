@@ -116,13 +116,12 @@ namespace StudentAidData
             List<Loan> loanList = new List<Loan>();
             foreach(var loan in loans)
             {
-                Loan currentLoan = new Loan();
-                List<string> statusChanges = new List<string>();
-                List<Status> status = new List<Status>();
+                Loan currentLoan = new();
+                List<string> statusChanges = new();
                 Type loanType = typeof(Loan);
                 foreach(string line in loan)
                 {
-                    Dictionary<string,string> loanDict = new Dictionary<string, string>();
+                    Dictionary<string,string> loanDict = new();
                     var parts = line.Split(new[] { ':' }, 2);
                     string key = parts[0];
                     string value = parts[1] ?? "";
@@ -134,43 +133,55 @@ namespace StudentAidData
 
                     SetProperty(currentLoan, loanType, key, value);
                 }
-
-                Status loanStatus = new();
-                foreach(var lin in statusChanges)
-                {
-                    var parts = lin.Split(new[] { ':' }, 2);
-                    string key = parts[0];
-                    string value = parts[1] != null ? parts[1] : "";
-                    
-                    switch(key)
-                    {
-                        case "Loan Status":
-                            loanStatus.LoanStatus = value;
-                            break;
-                        case "Loan Status Description": 
-                            loanStatus.LoanStatusDescription = value;
-                            break;
-                        case "Loan Status Effective Date":
-                            try {
-                                loanStatus.LoanStatusEffectiveDate = DateTime.ParseExact(value, format, provider);                            
-                            }
-                            catch(Exception ex) {
-                                Console.WriteLine(ex.Message);
-                                loanStatus.LoanStatusEffectiveDate = null;
-                            }
-                            status.Add(new Status{
-                                LoanStatus=loanStatus.LoanStatus,
-                                LoanStatusDescription=loanStatus.LoanStatusDescription,
-                                LoanStatusEffectiveDate=loanStatus.LoanStatusEffectiveDate
-                            });
-                            loanStatus = new Status();
-                            break;
-                    }
-                currentLoan.StatusChanges = status;
-                }
+                currentLoan.StatusChanges = ParseStatusChanges(statusChanges, format, provider);
+                loanList.Add(currentLoan);
+              
                 loanList.Add(currentLoan);
             }
             return loanList;
+        }
+        public static List<Status> ParseStatusChanges(List<string> statusChanges, string format, CultureInfo provider)
+        {
+            Status loanStatus = new();
+            List<Status> statusList = new();
+
+            foreach(var lin in statusChanges)
+            {
+                var parts = lin.Split(new[] { ':' }, 2);
+                string key = parts[0];
+                string value = parts[1] ?? "";
+
+                switch (key)
+                {
+                    case "Loan Status":
+                        loanStatus.LoanStatus = value;
+                        break;
+                    case "Loan Status Description":
+                        loanStatus.LoanStatusDescription = value;
+                        break;
+                    case "Loan Status Effective Date":
+                        try
+                        {
+                            loanStatus.LoanStatusEffectiveDate = DateTime.ParseExact(value, format, provider);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            loanStatus.LoanStatusEffectiveDate = null;
+                        }
+
+                        statusList.Add(new Status
+                        {
+                            LoanStatus = loanStatus.LoanStatus,
+                            LoanStatusDescription = loanStatus.LoanStatusDescription,
+                            LoanStatusEffectiveDate = loanStatus.LoanStatusEffectiveDate
+                        });
+
+                        loanStatus = new Status();
+                        break;
+                }
+            }
+            return statusList;
         }
     }
 }
